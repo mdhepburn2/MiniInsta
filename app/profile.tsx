@@ -4,6 +4,7 @@ import { styles } from "@/assets/styles";
 import { useState, useEffect } from "react";
 import { url } from "@/constants/api";
 import { Image, FlatList, Pressable } from "react-native";
+import { mediaUrl } from "@/constants/api";
 
 
 
@@ -40,11 +41,11 @@ export default function profile(){
             </View>
         )
     }
-    // console.log(posts)
+    console.log(posts)
 
     return(
         <View style={styles.container}>
-            <Image source={{ uri: profile.pfp_url}} style={{height: 100, width: 100, borderRadius: 50}}/>
+            <Image source={{ uri: mediaUrl(profile.pfp_url)}} style={{height: 100, width: 100, borderRadius: 50}}/>
             <Text>{profile.display_name}</Text>
             <Text>@{profile.username}</Text>
             <FlatList
@@ -52,7 +53,7 @@ export default function profile(){
             renderItem={({item}) => (
                 <Link href={{ pathname: '/post', params:{ pk: item.pk } }} asChild>
                     <Pressable>
-                        <Image source={{ uri: item.first_photo.url}} style={{height: 100, width: 100}}/>
+                        <Image source={{ uri: mediaUrl(item.first_photo.url)}} style={{height: 100, width: 100}}/>
                     </Pressable>
                 </Link>
             )}
