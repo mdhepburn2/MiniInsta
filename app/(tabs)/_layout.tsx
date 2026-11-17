@@ -24,9 +24,9 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
+                ios: 'book',
+                android: 'book',
+                web: 'book',
               }}
               tintColor={color}
               size={28}

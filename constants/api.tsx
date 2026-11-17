@@ -1,0 +1,1 @@
+export const url = 'http://10.239.127.250:8000/mini_insta/api/'
