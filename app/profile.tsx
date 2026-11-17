@@ -43,17 +43,24 @@ export default function profile(){
     }
     console.log(posts)
 
-    return(
-        <View style={styles.container}>
-            <Image source={{ uri: mediaUrl(profile.pfp_url)}} style={{height: 100, width: 100, borderRadius: 50}}/>
-            <Text>{profile.display_name}</Text>
-            <Text>@{profile.username}</Text>
+return(
+        <View style={styles.profilePage}>
             <FlatList
+            style={styles.postGrid}
+            contentInsetAdjustmentBehavior="automatic"
             data={posts}
+            numColumns={3}
+            ListHeaderComponent={() => (
+                <View style={styles.profileHeader}>
+                    <Image source={{ uri: mediaUrl(profile.pfp_url)}} style={styles.profileHeaderAvatar}/>
+                    <Text style={styles.profileHeaderName}>{profile.display_name}</Text>
+                    <Text style={styles.profileHeaderUsername}>@{profile.username}</Text>
+                </View>
+            )}
             renderItem={({item}) => (
                 <Link href={{ pathname: '/post', params:{ pk: item.pk } }} asChild>
-                    <Pressable>
-                        <Image source={{ uri: mediaUrl(item.first_photo.url)}} style={{height: 100, width: 100}}/>
+                    <Pressable style={styles.postTile}>
+                        <Image source={{ uri: mediaUrl(item.first_photo.url)}} style={styles.postImage}/>
                     </Pressable>
                 </Link>
             )}
