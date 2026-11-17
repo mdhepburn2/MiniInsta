@@ -49,15 +49,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="user_profile"
         options={{
-          title: 'Tab Two',
+          title: 'You',
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
+                ios: 'person',
+                android: 'person',
+                web: 'person',
               }}
               tintColor={color}
               size={28}

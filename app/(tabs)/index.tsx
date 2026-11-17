@@ -25,7 +25,6 @@ export default function AllProfiles() {
     contentContainerStyle={styles.profileList}
     data={profiles}
     renderItem={({item}) => (
-      // <View>
         <Link href={{ pathname: '/profile', params:{ pk: item.pk } }} asChild>
           <Pressable style={({ pressed }) => [styles.profileCard, pressed && styles.profileCardPressed]}>
             <Image source={{ uri: mediaUrl(item.pfp_url) }} style={styles.profileAvatar} />
@@ -35,7 +34,6 @@ export default function AllProfiles() {
             </View>
           </Pressable>
         </Link>
-      // </View>
     )}
     ListHeaderComponent={() => (
       <View style={[styles.container, styles.transparent]}>
