@@ -6,7 +6,7 @@ import { url } from "@/constants/api";
 import { Image, FlatList } from "react-native";
 import { mediaUrl } from "@/constants/api";
 
-export default function post(){
+export default function Post(){
     const { pk } = useLocalSearchParams()
     const [post, setPost] = useState<any>()
     const [loading, setLoading] = useState(true)
@@ -33,10 +33,23 @@ export default function post(){
 
     return(
         <FlatList
+        style={styles.postDetailList}
+        contentContainerStyle={styles.postDetailContent}
+        contentInsetAdjustmentBehavior="automatic"
         data={post.all_photos}
+        numColumns={1}
         renderItem={({item}) => (
-            <View style={styles.container}>
-                <Image source={{ uri: mediaUrl(item.url) }} style={{height: 100, width: 100}}/>
+            <View style={styles.postDetailTile}>
+                <Image
+                    source={{ uri: mediaUrl(item.url) }}
+                    style={styles.postDetailImage}
+                    resizeMode="contain"
+                />
+            </View>
+        )}
+        ListFooterComponent={() => (
+            <View style={[styles.postDetailFooter, styles.transparent]}>
+                <Text style={styles.postDetailCaption}>{post.caption}</Text>
             </View>
         )}
         />

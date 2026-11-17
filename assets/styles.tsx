@@ -97,4 +97,34 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+
+   // Single Post screen
+  postDetailList: {
+    width: '100%',
+  },
+  postDetailContent: {
+    paddingHorizontal: 10,
+    paddingTop: 8,
+  },
+  postDetailTile: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 8,
+    backgroundColor: 'transparent',
+  },
+  postDetailImage: {
+    width: '70%',
+    aspectRatio: 1,
+    borderRadius: 8,
+    backgroundColor: 'rgba(128,128,128,0.12)',
+  },
+  postDetailFooter: {
+    paddingHorizontal: 6,
+    paddingTop: 12,
+    paddingBottom: 32,
+  },
+  postDetailCaption: {
+    fontSize: 15,
+    lineHeight: 21,
+  },
 })

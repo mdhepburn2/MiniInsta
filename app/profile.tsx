@@ -8,7 +8,7 @@ import { mediaUrl } from "@/constants/api";
 
 
 
-export default function profile(){
+export default function Profile(){
     const { pk } = useLocalSearchParams()
     // console.log(pk)
 
