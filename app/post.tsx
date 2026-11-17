@@ -1,5 +1,5 @@
 import { View, Text } from "@/components/Themed";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, Stack } from "expo-router";
 import { styles } from "@/assets/styles";
 import { useState, useEffect } from "react";
 import { url } from "@/constants/api";
@@ -7,7 +7,7 @@ import { Image, FlatList } from "react-native";
 import { mediaUrl } from "@/constants/api";
 
 export default function Post(){
-    const { pk } = useLocalSearchParams()
+    const { pk, username } = useLocalSearchParams()
     const [post, setPost] = useState<any>()
     const [loading, setLoading] = useState(true)
 
@@ -26,12 +26,15 @@ export default function Post(){
     if(loading){
         return(
             <View style={styles.container}>
+                <Stack.Screen options={{ headerBackTitle: '@' + username}} />
                 <Text>Loading...</Text>
             </View>
         )
     }
 
     return(
+        <>
+        <Stack.Screen options={{ headerBackTitle: '@' + username}} />
         <FlatList
         style={styles.postDetailList}
         contentContainerStyle={styles.postDetailContent}
@@ -53,5 +56,6 @@ export default function Post(){
             </View>
         )}
         />
+        </>
     )
 }

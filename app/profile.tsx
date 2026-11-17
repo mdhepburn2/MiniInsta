@@ -1,5 +1,5 @@
 import { View, Text } from "@/components/Themed";
-import { useLocalSearchParams, Link } from "expo-router";
+import { useLocalSearchParams, Link, Stack } from "expo-router";
 import { styles } from "@/assets/styles";
 import { useState, useEffect } from "react";
 import { url } from "@/constants/api";
@@ -37,6 +37,7 @@ export default function Profile(){
     if(loading){
         return(
             <View style={styles.container}>
+                <Stack.Screen options={{ headerBackTitle: 'Back' }} />
                 <Text>Loading...</Text>
             </View>
         )
@@ -45,6 +46,7 @@ export default function Profile(){
 
 return(
         <View style={styles.profilePage}>
+            <Stack.Screen options={{ title: '@' + profile.username, headerBackTitle: 'Back' }} />
             <FlatList
             style={styles.postGrid}
             contentInsetAdjustmentBehavior="automatic"
@@ -58,7 +60,7 @@ return(
                 </View>
             )}
             renderItem={({item}) => (
-                <Link href={{ pathname: '/post', params:{ pk: item.pk } }} asChild>
+                <Link href={{ pathname: '/post', params:{ pk: item.pk, username: profile.username } }} asChild>
                     <Pressable style={styles.postTile}>
                         <Image source={{ uri: mediaUrl(item.first_photo.url)}} style={styles.postImage}/>
                     </Pressable>
