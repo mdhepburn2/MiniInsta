@@ -20,7 +20,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: 'All Profiles',
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{
@@ -32,20 +32,20 @@ export default function TabLayout() {
               size={28}
             />
           ),
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable style={{ marginRight: 15 }}>
-                {({ pressed }) => (
-                  <SymbolView
-                    name={{ ios: 'info.circle', android: 'info', web: 'info' }}
-                    size={25}
-                    tintColor={Colors[colorScheme].text}
-                    style={{ opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          // headerRight: () => (
+          //   <Link href="/modal" asChild>
+          //     <Pressable style={{ marginRight: 15 }}>
+          //       {({ pressed }) => (
+          //         <SymbolView
+          //           name={{ ios: 'info.circle', android: 'info', web: 'info' }}
+          //           size={25}
+          //           tintColor={Colors[colorScheme].text}
+          //           style={{ opacity: pressed ? 0.5 : 1 }}
+          //         />
+          //       )}
+          //     </Pressable>
+          //   </Link>
+          // ),
         }}
       />
       <Tabs.Screen
