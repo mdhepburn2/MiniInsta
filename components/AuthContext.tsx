@@ -5,13 +5,13 @@ import { url } from '@/constants/api';
 // Change this to your Django server address
 const API_URL = url;
 
-const AuthContext = createContext(null);
+const AuthContext = createContext<any>(null);
 
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(null);
-  const [profileId, setProfileId] = useState(null);
+  const [token, setToken] = useState<any>(null);
+  const [profileId, setProfileId] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => { // restore session on launch
@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
   const login = async (username, password) => {
     // POST /api/login/, then save token + profile.id
     // to state AND AsyncStorage
-    const res = await fetch(`${API_URL}/api/login/`, {
+    const res = await fetch(`${API_URL}login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
