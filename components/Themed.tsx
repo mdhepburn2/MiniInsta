@@ -30,6 +30,11 @@ export function useThemeColor(
   }
 }
 
+/** The full palette for the current light/dark mode. */
+export function useColors() {
+  return Colors[useColorScheme()];
+}
+
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');

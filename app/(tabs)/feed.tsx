@@ -1,13 +1,14 @@
-import { FlatList, Image, Pressable, ActivityIndicator } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 import { Link, Stack } from 'expo-router';
-import { styles } from '@/assets/styles';
-import { Text, View } from '@/components/Themed';
+import { useColors } from '@/components/Themed';
 import { useAuth } from '@/components/AuthContext';
+import { FittedImage, Centered, MessageText, Tappable } from '@/assets/styles';
 import { useEffect, useState } from 'react';
 import { url, mediaUrl } from '@/constants/api';
 
 export default function Feed(){
     const { authFetch, profileId } = useAuth()
+    const c = useColors()
     const [loading, setLoading] = useState(true)
     const [posts, setPosts] = useState<any>()
     const [error, setError] = useState<string | null>(null)
@@ -43,38 +44,38 @@ export default function Feed(){
 
     if(loading){
         return(
-            <View style={styles.container}>
+            <Centered>
                 <Stack.Screen options={{ headerBackTitle: 'Back' }} />
                 <ActivityIndicator size="large" />
-            </View>
+            </Centered>
         )
     }
     if(error || !posts){
         return(
-            <View style={styles.container}>
+            <Centered>
                 <Stack.Screen options={{ headerBackTitle: 'Back' }} />
-                <Text>{error ?? 'Feed not found.'}</Text>
-            </View>
+                <MessageText>{error ?? 'Feed not found.'}</MessageText>
+            </Centered>
         )
     }
 
+    // One photo per row at its own proportions, with rounded corners like the web feed
     return(
-        <View style={styles.profilePage}>
-          <FlatList
-          style={styles.postGrid}
-          contentInsetAdjustmentBehavior="automatic"
-          data={posts}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          numColumns={1}
-          renderItem={({item}) => (
-              <Link href={{ pathname: '/post', params:{ pk: item.pk } }} asChild>
-                  <Pressable style={styles.postTile}>
-                      <Image source={{ uri: mediaUrl(item.first_photo.url)}} style={styles.postImage}/>
-                  </Pressable>
-              </Link>
-          )}
-          />
-      </View>
+        <FlatList
+        style={{ flex: 1, backgroundColor: c.background }}
+        contentContainerStyle={{ padding: 16, gap: 16 }}
+        contentInsetAdjustmentBehavior="automatic"
+        data={posts}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        numColumns={1}
+        renderItem={({item}) => (
+            <Link href={{ pathname: '/post', params:{ pk: item.pk } }} asChild>
+                <Tappable pressedOpacity={0.85} style={{ borderRadius: 16, borderCurve: 'continuous', overflow: 'hidden' }}>
+                    <FittedImage uri={mediaUrl(item.first_photo.url)} />
+                </Tappable>
+            </Link>
+        )}
+        />
     )
 }

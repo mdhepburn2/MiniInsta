@@ -1,14 +1,14 @@
-import { FlatList, Image, Pressable, ActivityIndicator } from 'react-native';
-import { Link, Stack, router } from 'expo-router';
-import { Host, Button } from '@expo/ui';
-import { styles } from '@/assets/styles';
-import { Text, View } from '@/components/Themed';
+import { FlatList, ActivityIndicator } from 'react-native';
+import { Stack, router } from 'expo-router';
+import { useColors } from '@/components/Themed';
 import { useAuth } from '@/components/AuthContext';
+import { PillButton, Centered, MessageText, ProfileHeader, GridTile } from '@/assets/styles';
 import { useEffect, useState } from 'react';
 import { url, mediaUrl } from '@/constants/api';
 
 export default function UserProfile() {
   const { authFetch, profileId } = useAuth()
+  const c = useColors()
   const [profile, setProfile] = useState<any>()
   const [loading, setLoading] = useState(true)
   const [posts, setPosts] = useState<any>()
@@ -48,58 +48,48 @@ export default function UserProfile() {
 
   if(loading){
       return(
-          <View style={styles.container}>
+          <Centered>
               <Stack.Screen options={{ headerBackTitle: 'Back' }} />
               <ActivityIndicator size="large" />
-          </View>
+          </Centered>
       )
   }
   if(error || !profile){
       return(
-          <View style={styles.container}>
+          <Centered>
               <Stack.Screen options={{ headerBackTitle: 'Back' }} />
-              <Text>{error ?? 'Profile not found.'}</Text>
-          </View>
+              <MessageText>{error ?? 'Profile not found.'}</MessageText>
+          </Centered>
       )
   }
 //   console.log(posts)
 
 return(
-      <View style={styles.profilePage}>
+      <>
           <Stack.Screen options={{ title: '@' + profile.username, headerBackTitle: 'Back' }} />
           <FlatList
-          style={styles.postGrid}
+          style={{ flex: 1, backgroundColor: c.background }}
           contentInsetAdjustmentBehavior="automatic"
           data={posts}
           refreshing={refreshing}
           onRefresh={onRefresh}
           numColumns={3}
           ListHeaderComponent={() => (
-              <View style={styles.profileHeader}>
-                  <Image source={{ uri: mediaUrl(profile.pfp_url)}} style={styles.profileHeaderAvatar}/>
-                  <Text style={styles.profileHeaderName}>{profile.display_name}</Text>
-                  <Text style={styles.profileHeaderUsername}>@{profile.username}</Text>
-              </View>
-          )}
-          ListFooterComponent={() => (
-              <View style={styles.profileFooter}>
-                  <Host matchContents>
-                      <Button
-                          variant="filled"
-                          label="New Post"
-                          onPress={() => router.push('/create_post')}
-                      />
-                  </Host>
-              </View>
+              <ProfileHeader
+                  photo={mediaUrl(profile.pfp_url)}
+                  name={profile.display_name}
+                  username={profile.username}
+              >
+                  <PillButton label="New Post" onPress={() => router.push('/create_post')} />
+              </ProfileHeader>
           )}
           renderItem={({item}) => (
-              <Link href={{ pathname: '/post', params:{ pk: item.pk, username: profile.username } }} asChild>
-                  <Pressable style={styles.postTile}>
-                      <Image source={{ uri: mediaUrl(item.first_photo.url)}} style={styles.postImage}/>
-                  </Pressable>
-              </Link>
+              <GridTile
+                  href={{ pathname: '/post', params:{ pk: item.pk, username: profile.username } }}
+                  photo={mediaUrl(item.first_photo.url)}
+              />
           )}
           />
-      </View>
+      </>
   )
 }

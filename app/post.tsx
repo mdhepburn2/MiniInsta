@@ -1,20 +1,21 @@
-import { View, Text } from "@/components/Themed";
 import { useLocalSearchParams, Stack } from "expo-router";
-import { styles } from "@/assets/styles";
 import { useState, useEffect } from "react";
 import { url } from "@/constants/api";
-import { Image, FlatList, ActivityIndicator } from "react-native";
+import { FlatList, ActivityIndicator, Text } from "react-native";
 import { mediaUrl } from "@/constants/api";
 import { useAuth } from "@/components/AuthContext";
+import { useColors } from "@/components/Themed";
+import { FittedImage, Centered, MessageText } from '@/assets/styles';
 
 export default function Post(){
     const { authFetch } = useAuth()
     const { pk, username } = useLocalSearchParams()
+    const c = useColors()
     const [post, setPost] = useState<any>()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    const back = username === undefined ? 'back' : `@${username}`
+    const back = username === undefined ? 'Back' : `@${username}`
 
     const fetchData = async () => {
         setLoading(true)
@@ -37,43 +38,38 @@ export default function Post(){
 
     if(loading){
         return(
-            <View style={styles.container}>
-                <Stack.Screen options={{ headerBackTitle: back}} />
+            <Centered>
+                <Stack.Screen options={{ title: 'Post', headerBackTitle: back }} />
                 <ActivityIndicator size="large" />
-            </View>
+            </Centered>
         )
     }
     if(error || !post){
         return(
-            <View style={styles.container}>
-                <Stack.Screen options={{ headerBackTitle: back}} />
-                <Text>{error ?? 'Post not found.'}</Text>
-            </View>
+            <Centered>
+                <Stack.Screen options={{ title: 'Post', headerBackTitle: back }} />
+                <MessageText>{error ?? 'Post not found.'}</MessageText>
+            </Centered>
         )
     }
 
     return(
         <>
-        <Stack.Screen options={{ headerBackTitle: back}} />
+        <Stack.Screen options={{ title: 'Post', headerBackTitle: back }} />
         <FlatList
-        style={styles.postDetailList}
-        contentContainerStyle={styles.postDetailContent}
+        style={{ flex: 1, backgroundColor: c.background }}
+        contentContainerStyle={{ gap: 2 }}
         contentInsetAdjustmentBehavior="automatic"
         data={post.all_photos}
         numColumns={1}
+        // Photos run edge to edge at their own proportions, never cropped
         renderItem={({item}) => (
-            <View style={styles.postDetailTile}>
-                <Image
-                    source={{ uri: mediaUrl(item.url) }}
-                    style={styles.postDetailImage}
-                    resizeMode="contain"
-                />
-            </View>
+            <FittedImage uri={mediaUrl(item.url)} minRatio={0.5} maxRatio={3} resizeMode="contain" />
         )}
         ListFooterComponent={() => (
-            <View style={[styles.postDetailFooter, styles.transparent]}>
-                <Text style={styles.postDetailCaption}>{post.caption}</Text>
-            </View>
+            <Text selectable style={{ color: c.text, fontSize: 17, lineHeight: 24, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}>
+                {post.caption}
+            </Text>
         )}
         />
         </>

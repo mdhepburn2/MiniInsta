@@ -2,28 +2,31 @@
 // Description: screen that lets the logged-in user create a new post
 // with up to 10 photos and a caption
 
-import { Host, Column, Button, Text as UIText, TextInput, useNativeState } from '@expo/ui';
+import { Host, TextInput, useNativeState } from '@expo/ui';
+import { SymbolView } from 'expo-symbols';
 import { useAuth } from '@/components/AuthContext';
-import { Text, View } from '@/components/Themed';
+import { useColors } from '@/components/Themed';
+import { PillButton } from '@/assets/styles';
 import { url } from '@/constants/api';
 import { File as FSFile } from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import { router, Stack } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
-    ActivityIndicator,
     Alert,
     Image,
     Platform,
     Pressable,
     ScrollView,
-    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 
 const MAX_PHOTOS = 10;
 
 export default function CreatePost(){
     const { authFetch, profileId } = useAuth()
+    const c = useColors()
     const [photos, setPhotos] = useState<ImagePicker.ImagePickerAsset[]>([])
     const [posting, setPosting] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -100,49 +103,128 @@ export default function CreatePost(){
         }
     }
 
+    const thumbSize = 112
+    const pickDisabled = remaining <= 0 || posting
+
     return(
         <ScrollView
+            style={{ backgroundColor: c.background }}
             contentInsetAdjustmentBehavior="automatic"
             keyboardDismissMode="interactive"
-            contentContainerStyle={local.page}
+            contentContainerStyle={{ padding: 20, gap: 24 }}
         >
             <Stack.Screen options={{ title: 'New Post', headerBackTitle: 'Back' }} />
 
             {/* select photos */}
-            <View style={local.section}>
-                {photos.length > 0 && (
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={local.thumbRow}>
+            <View style={{ gap: 10 }}>
+                {photos.length === 0 ? (
+                    <Pressable
+                        onPress={pickPhotos}
+                        disabled={pickDisabled}
+                        accessibilityRole="button"
+                        accessibilityLabel="Select Photos"
+                        style={({ pressed }) => ({
+                            height: 220,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 10,
+                            borderRadius: 20,
+                            borderCurve: 'continuous',
+                            borderWidth: 1.5,
+                            borderStyle: 'dashed',
+                            borderColor: c.tint,
+                            backgroundColor: pressed ? c.separator : c.surface,
+                            opacity: pickDisabled ? 0.45 : 1,
+                        })}
+                    >
+                        <SymbolView
+                            name={{ ios: 'photo.on.rectangle.angled', android: 'add_photo_alternate', web: 'add_photo_alternate' }}
+                            tintColor={c.tint as string}
+                            size={34}
+                        />
+                        <Text style={{ color: c.tint, fontSize: 17, fontWeight: '600' }}>Select Photos</Text>
+                    </Pressable>
+                ) : (
+                    // bleeds past the page padding so thumbnails scroll edge to edge
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={{ marginHorizontal: -20 }}
+                        contentContainerStyle={{ paddingHorizontal: 20, gap: 8 }}
+                    >
                         {photos.map(photo => (
-                            <View key={photo.uri} style={local.thumbWrap}>
-                                <Image source={{ uri: photo.uri }} style={local.thumb} />
+                            <View key={photo.uri}>
+                                <Image
+                                    source={{ uri: photo.uri }}
+                                    style={{ width: thumbSize, height: thumbSize, borderRadius: 12, backgroundColor: c.surface }}
+                                />
                                 <Pressable
                                     onPress={() => removePhoto(photo.uri)}
-                                    style={local.removeBtn}
                                     hitSlop={8}
                                     accessibilityLabel="Remove photo"
+                                    style={{
+                                        position: 'absolute',
+                                        top: 6,
+                                        right: 6,
+                                        width: 24,
+                                        height: 24,
+                                        borderRadius: 12,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: 'rgba(0,0,0,0.6)',
+                                    }}
                                 >
-                                    <Text style={local.removeText}>✕</Text>
+                                    <SymbolView
+                                        name={{ ios: 'xmark', android: 'close', web: 'close' }}
+                                        tintColor="#fff"
+                                        size={11}
+                                        weight="bold"
+                                    />
                                 </Pressable>
                             </View>
                         ))}
+                        <Pressable
+                            onPress={pickPhotos}
+                            disabled={pickDisabled}
+                            accessibilityRole="button"
+                            accessibilityLabel="Add More Photos"
+                            style={({ pressed }) => ({
+                                width: thumbSize,
+                                height: thumbSize,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 6,
+                                borderRadius: 12,
+                                borderWidth: 1.5,
+                                borderStyle: 'dashed',
+                                borderColor: c.tint,
+                                backgroundColor: pressed ? c.separator : c.surface,
+                                opacity: pickDisabled ? 0.45 : 1,
+                            })}
+                        >
+                            <SymbolView name={{ ios: 'plus', android: 'add', web: 'add' }} tintColor={c.tint as string} size={22} />
+                            <Text style={{ color: c.tint, fontSize: 13, fontWeight: '600' }}>Add More</Text>
+                        </Pressable>
                     </ScrollView>
                 )}
-                <Host matchContents>
-                    <Column spacing={4} alignment="center">
-                        <Button
-                            variant="outlined"
-                            label={photos.length === 0 ? 'Select Photos' : 'Add More Photos'}
-                            onPress={pickPhotos}
-                            disabled={remaining <= 0 || posting}
-                        />
-                        <UIText>{`${photos.length} / ${MAX_PHOTOS} photos`}</UIText>
-                    </Column>
-                </Host>
+                <Text style={{ color: c.secondaryText, fontSize: 13, fontVariant: ['tabular-nums'] }}>
+                    {`${photos.length} / ${MAX_PHOTOS} photos`}
+                </Text>
             </View>
 
             {/* caption */}
-            <View style={local.section}>
-                <Host matchContents={{ vertical: true }} style={local.fullWidth}>
+            <View
+                style={{
+                    minHeight: 120,
+                    padding: 14,
+                    borderRadius: 14,
+                    borderCurve: 'continuous',
+                    borderWidth: 1,
+                    borderColor: c.separator,
+                    backgroundColor: c.surface,
+                }}
+            >
+                <Host matchContents={{ vertical: true }} style={{ width: '100%' }}>
                     <TextInput
                         value={caption}
                         onChangeText={onChangeCaption}
@@ -155,66 +237,19 @@ export default function CreatePost(){
             </View>
 
             {/* post */}
-            {error && <Text style={local.error}>{error}</Text>}
-            {posting ? (
-                <ActivityIndicator size="large" />
-            ) : (
-                <Host matchContents>
-                    <Button
-                        variant="filled"
-                        label="Post"
-                        onPress={submit}
-                        disabled={photos.length === 0}
-                    />
-                </Host>
-            )}
+            <View style={{ gap: 12 }}>
+                {error && (
+                    <Text selectable style={{ color: c.danger, fontSize: 15, textAlign: 'center' }}>
+                        {error}
+                    </Text>
+                )}
+                <PillButton
+                    label="Post"
+                    onPress={submit}
+                    loading={posting}
+                    disabled={photos.length === 0}
+                />
+            </View>
         </ScrollView>
     )
 }
-
-const local = StyleSheet.create({
-    page: {
-        padding: 20,
-        gap: 24,
-        alignItems: 'center',
-    },
-    section: {
-        width: '100%',
-        alignItems: 'center',
-        gap: 12,
-        backgroundColor: 'transparent',
-    },
-    fullWidth: {
-        width: '100%',
-    },
-    thumbRow: {
-        gap: 8,
-    },
-    thumbWrap: {
-        backgroundColor: 'transparent',
-    },
-    thumb: {
-        width: 110,
-        height: 110,
-        borderRadius: 8,
-    },
-    removeBtn: {
-        position: 'absolute',
-        top: 4,
-        right: 4,
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    removeText: {
-        color: 'white',
-        fontSize: 12,
-        fontWeight: '700',
-    },
-    error: {
-        color: '#d33',
-    },
-})

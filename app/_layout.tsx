@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '@/components/AuthContext';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import Colors from '@/constants/Colors';
 import LoginScreen from './login';
 
 export {
@@ -52,8 +53,23 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const { token, isLoading } = useAuth();
 
+  // Tint headers, back buttons and tabs with the app's palette
+  const base = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+  const palette = Colors[colorScheme];
+  const navTheme = {
+    ...base,
+    colors: {
+      ...base.colors,
+      primary: palette.tint,
+      background: palette.background,
+      card: palette.background,
+      text: palette.text,
+      border: palette.separator,
+    },
+  };
+
   const MainTabs = () => (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={navTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />

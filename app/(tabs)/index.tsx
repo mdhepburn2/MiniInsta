@@ -1,14 +1,15 @@
-import { Text, View } from '@/components/Themed';
 import { useEffect, useState } from 'react';
-import { FlatList, Image, Pressable, ActivityIndicator } from 'react-native';
-import { styles } from '@/assets/styles';
+import { FlatList, ActivityIndicator, Text, View } from 'react-native';
+import { Avatar, MessageText, Tappable } from '@/assets/styles';
 import { Link } from 'expo-router';
 import { url } from '@/constants/api';
 import { mediaUrl } from '@/constants/api';
 import { useAuth } from '@/components/AuthContext';
+import { useColors } from '@/components/Themed';
 
 export default function AllProfiles() {
   const { authFetch } = useAuth()
+  const c = useColors()
 
   const [profiles, setProfiles] = useState()
   const [error, setError] = useState<string | null>(null)
@@ -33,26 +34,30 @@ export default function AllProfiles() {
     fetchData()
   }, [])
 
+  // Two-column grid of ringed photos, like the web app's profile grid
   return (
     <FlatList
-    contentContainerStyle={styles.profileList}
+    style={{ backgroundColor: c.background }}
+    contentInsetAdjustmentBehavior="automatic"
+    contentContainerStyle={{ paddingHorizontal: 12, paddingVertical: 24, gap: 28 }}
+    columnWrapperStyle={{ gap: 12 }}
+    numColumns={2}
     data={profiles}
-    ListEmptyComponent={() => (loading ? <ActivityIndicator size="large" /> : error ? <Text style={styles.profileUsername}>{error}</Text> : null)}
+    ListEmptyComponent={() => (
+      <View style={{ paddingTop: 64, alignItems: 'center' }}>
+        {loading ? <ActivityIndicator size="large" /> : error ? <MessageText>{error}</MessageText> : null}
+      </View>
+    )}
     renderItem={({item}) => (
         <Link href={{ pathname: '/profile', params:{ pk: item.pk } }} asChild>
-          <Pressable style={({ pressed }) => [styles.profileCard, pressed && styles.profileCardPressed]}>
-            <Image source={{ uri: mediaUrl(item.pfp_url) }} style={styles.profileAvatar} />
-            <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>{item.display_name}</Text>
-              <Text style={styles.profileUsername}>@{item.username}</Text>
+          <Tappable style={{ flex: 1, maxWidth: '50%', alignItems: 'center', gap: 10 }}>
+            <Avatar uri={mediaUrl(item.pfp_url)} size={136} />
+            <View style={{ alignItems: 'center', gap: 1, paddingHorizontal: 4 }}>
+              <Text numberOfLines={1} style={{ color: c.text, fontSize: 16, fontWeight: '600' }}>{item.display_name}</Text>
+              <Text numberOfLines={1} style={{ color: c.tint, fontSize: 14 }}>@{item.username}</Text>
             </View>
-          </Pressable>
+          </Tappable>
         </Link>
-    )}
-    ListHeaderComponent={() => (
-      <View style={[styles.container, styles.transparent]}>
-        <Text style={styles.title}>All Profiles</Text>
-      </View>
     )}
     />
   );

@@ -1,21 +1,24 @@
 import { SymbolView } from 'expo-symbols';
-import { Link, Tabs } from 'expo-router';
-import { Platform, Pressable } from 'react-native';
+import { Tabs } from 'expo-router';
+import { Pressable, Text } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useAuth } from '@/components/AuthContext';
-import { Text } from '@/components/Themed';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const c = Colors[colorScheme];
   const {logout} = useAuth()
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarActiveTintColor: c.tabIconSelected,
+        tabBarInactiveTintColor: c.tabIconDefault,
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
+        headerTitleStyle: { fontSize: 17, fontWeight: '600', color: c.text },
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
@@ -24,46 +27,32 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'All Profiles',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <SymbolView
               name={{
-                ios: 'person.3',
-                android: 'book',
-                web: 'book',
+                ios: focused ? 'person.2.fill' : 'person.2',
+                android: 'group',
+                web: 'group',
               }}
               tintColor={color}
-              size={28}
+              size={26}
             />
           ),
-          // headerRight: () => (
-          //   <Link href="/modal" asChild>
-          //     <Pressable style={{ marginRight: 15 }}>
-          //       {({ pressed }) => (
-          //         <SymbolView
-          //           name={{ ios: 'info.circle', android: 'info', web: 'info' }}
-          //           size={25}
-          //           tintColor={Colors[colorScheme].text}
-          //           style={{ opacity: pressed ? 0.5 : 1 }}
-          //         />
-          //       )}
-          //     </Pressable>
-          //   </Link>
-          // ),
         }}
       />
       <Tabs.Screen
         name="feed"
         options={{
           title: 'Feed',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <SymbolView
               name={{
-                ios: 'rectangle.stack',
-                android: 'book',
-                web: 'book',
+                ios: focused ? 'square.stack.fill' : 'square.stack',
+                android: 'dynamic_feed',
+                web: 'dynamic_feed',
               }}
               tintColor={color}
-              size={28}
+              size={26}
             />
           ),
         }}
@@ -72,26 +61,29 @@ export default function TabLayout() {
         name="user_profile"
         options={{
           title: 'You',
-          tabBarIcon: ({ color }) => (
+          tabBarLabel: 'You', // the screen sets its title to @username; keep the tab label short
+          tabBarIcon: ({ color, focused }) => (
             <SymbolView
               name={{
-                ios: 'person.crop.circle',
-                android: 'person',
-                web: 'person',
+                ios: focused ? 'person.crop.circle.fill' : 'person.crop.circle',
+                android: 'account_circle',
+                web: 'account_circle',
               }}
               tintColor={color}
-              size={28}
+              size={26}
             />
           ),
           headerRight: () => (
-            <Pressable 
-              style={{marginRight:15}}
+            <Pressable
               onPress={() => {logout()}}
+              hitSlop={8}
+              accessibilityRole="button"
+              style={({ pressed }) => ({ marginRight: 16, opacity: pressed ? 0.5 : 1 })}
               >
-              <Text>Logout</Text>
+              <Text style={{ color: c.tint, fontSize: 17 }}>Log Out</Text>
             </Pressable>
           )
-        }}        
+        }}
       />
     </Tabs>
   );
