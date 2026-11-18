@@ -25,11 +25,19 @@ export default function LoginScreen() {
             placeholder="Username"
             value={username}
             onChangeText={setUsername}
+            autoCorrect={false}
+            autoCapitalize="none"
+            spellCheck={false}
         />
         <TextInput 
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
+            autoCorrect={false}
+            autoCapitalize="none"
+            spellCheck={false}
+            secureTextEntry
+            autoComplete="password"
         />
         <Button 
         title="Login"

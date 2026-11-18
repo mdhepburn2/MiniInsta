@@ -5,9 +5,12 @@ import { Platform, Pressable } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useAuth } from '@/components/AuthContext';
+import { Text } from '@/components/Themed';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const {logout} = useAuth()
 
   return (
     <Tabs
@@ -63,7 +66,15 @@ export default function TabLayout() {
               size={28}
             />
           ),
-        }}
+          headerRight: () => (
+            <Pressable 
+              style={{marginRight:15}}
+              onPress={() => {logout()}}
+              >
+              <Text>Logout</Text>
+            </Pressable>
+          )
+        }}        
       />
     </Tabs>
   );
