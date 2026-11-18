@@ -5,15 +5,24 @@ import { styles } from '@/assets/styles';
 import { Link } from 'expo-router';
 import { url } from '@/constants/api';
 import { mediaUrl } from '@/constants/api';
+import { useAuth } from '@/components/AuthContext';
 
 export default function AllProfiles() {
+  const { authFetch } = useAuth()
 
   const [profiles, setProfiles] = useState()
+  const [error, setError] = useState<string | null>(null)
 
   const fetchData = async () => {
-    const profilesResponse = await fetch(url + 'profiles')
-    const allProfiles = await profilesResponse.json()
-    setProfiles(allProfiles.results)
+    try {
+      const profilesResponse = await authFetch(url + 'profiles')
+      const allProfiles = await profilesResponse.json()
+      setProfiles(allProfiles.results)
+      setError(null)
+    } catch (e) {
+      console.error('Failed to load profiles:', e)
+      setError('Could not load profiles. Please try again.')
+    }
   }
 
   useEffect(() => {
@@ -24,6 +33,7 @@ export default function AllProfiles() {
     <FlatList
     contentContainerStyle={styles.profileList}
     data={profiles}
+    ListEmptyComponent={() => (error ? <Text style={styles.profileUsername}>{error}</Text> : null)}
     renderItem={({item}) => (
         <Link href={{ pathname: '/profile', params:{ pk: item.pk } }} asChild>
           <Pressable style={({ pressed }) => [styles.profileCard, pressed && styles.profileCardPressed]}>

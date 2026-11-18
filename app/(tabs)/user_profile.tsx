@@ -11,19 +11,26 @@ export default function UserProfile() {
   const [profile, setProfile] = useState<any>()
   const [loading, setLoading] = useState(true)
   const [posts, setPosts] = useState<any>()
+  const [error, setError] = useState<string | null>(null)
 
   const fetchData = async () => {
       setLoading(true)
-      const profileResponse = await fetch(url + 'profile/' + profileId)
-      const postsResponse = await fetch(url + 'profile/' + profileId + '/posts')
+      try {
+          const profileResponse = await authFetch(url + 'profile/' + profileId)
+          const postsResponse = await authFetch(url + 'profile/' + profileId + '/posts')
 
-      const profile = await profileResponse.json()
-      const posts = await postsResponse.json()
+          const profile = await profileResponse.json()
+          const posts = await postsResponse.json()
 
-      setProfile(profile)
-      setPosts(posts.results)
-
-      setLoading(false)
+          setProfile(profile)
+          setPosts(posts.results)
+          setError(null)
+      } catch (e) {
+          console.error('Failed to load user profile:', e)
+          setError('Could not load your profile. Please try again.')
+      } finally {
+          setLoading(false)
+      }
   }
 
   useEffect(() => {
@@ -35,6 +42,14 @@ export default function UserProfile() {
           <View style={styles.container}>
               <Stack.Screen options={{ headerBackTitle: 'Back' }} />
               <Text>Loading...</Text>
+          </View>
+      )
+  }
+  if(error || !profile){
+      return(
+          <View style={styles.container}>
+              <Stack.Screen options={{ headerBackTitle: 'Back' }} />
+              <Text>{error ?? 'Profile not found.'}</Text>
           </View>
       )
   }

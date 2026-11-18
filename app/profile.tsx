@@ -5,29 +5,36 @@ import { useState, useEffect } from "react";
 import { url } from "@/constants/api";
 import { Image, FlatList, Pressable } from "react-native";
 import { mediaUrl } from "@/constants/api";
-
-
+import { useAuth } from "@/components/AuthContext";
 
 export default function Profile(){
+    const { authFetch } = useAuth()
     const { pk } = useLocalSearchParams()
     // console.log(pk)
 
     const [profile, setProfile] = useState<any>()
     const [posts, setPosts] = useState<any>()
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     const fetchData = async () => {
         setLoading(true)
-        const profileResponse = await fetch(url + 'profile/' + pk)
-        const postsResponse = await fetch(url + 'profile/' + pk + '/posts')
+        try {
+            const profileResponse = await authFetch(url + 'profile/' + pk)
+            const postsResponse = await authFetch(url + 'profile/' + pk + '/posts')
 
-        const profile = await profileResponse.json()
-        const posts = await postsResponse.json()
+            const profile = await profileResponse.json()
+            const posts = await postsResponse.json()
 
-        setProfile(profile)
-        setPosts(posts.results)
-
-        setLoading(false)
+            setProfile(profile)
+            setPosts(posts.results)
+            setError(null)
+        } catch (e) {
+            console.error('Failed to load profile:', e)
+            setError('Could not load this profile. Please try again.')
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -39,6 +46,14 @@ export default function Profile(){
             <View style={styles.container}>
                 <Stack.Screen options={{ headerBackTitle: 'Back' }} />
                 <Text>Loading...</Text>
+            </View>
+        )
+    }
+    if(error || !profile){
+        return(
+            <View style={styles.container}>
+                <Stack.Screen options={{ headerBackTitle: 'Back' }} />
+                <Text>{error ?? 'Profile not found.'}</Text>
             </View>
         )
     }

@@ -15,6 +15,7 @@ export default function LoginScreen() {
       await login(username, password);
       // no navigation needed, token changes and RootNavigator swaps screens
     } catch (e) {
+      console.error('Login failed:', e);
       setError("Invalid username or password");
     }
   };

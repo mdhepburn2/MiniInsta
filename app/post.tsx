@@ -5,18 +5,28 @@ import { useState, useEffect } from "react";
 import { url } from "@/constants/api";
 import { Image, FlatList } from "react-native";
 import { mediaUrl } from "@/constants/api";
+import { useAuth } from "@/components/AuthContext";
 
 export default function Post(){
+    const { authFetch } = useAuth()
     const { pk, username } = useLocalSearchParams()
     const [post, setPost] = useState<any>()
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     const fetchData = async () => {
         setLoading(true)
-        const postResponse = await fetch(url + 'post/' + pk)
-        const post = await postResponse.json()
-        setPost(post)
-        setLoading(false)
+        try {
+            const postResponse = await authFetch(url + 'post/' + pk)
+            const post = await postResponse.json()
+            setPost(post)
+            setError(null)
+        } catch (e) {
+            console.error('Failed to load post:', e)
+            setError('Could not load this post. Please try again.')
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -28,6 +38,14 @@ export default function Post(){
             <View style={styles.container}>
                 <Stack.Screen options={{ headerBackTitle: '@' + username}} />
                 <Text>Loading...</Text>
+            </View>
+        )
+    }
+    if(error || !post){
+        return(
+            <View style={styles.container}>
+                <Stack.Screen options={{ headerBackTitle: '@' + username}} />
+                <Text>{error ?? 'Post not found.'}</Text>
             </View>
         )
     }

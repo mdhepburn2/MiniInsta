@@ -25,20 +25,25 @@ export function AuthProvider({ children }) {
   const login = async (username, password) => {
     // POST /api/login/, then save token + profile.id
     // to state AND AsyncStorage
-    const res = await fetch(`${API_URL}login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    if (!res.ok) throw new Error('Login failed');
+    try {
+      const res = await fetch(`${API_URL}login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      if (!res.ok) throw new Error('Login failed');
 
-    const data = await res.json(); 
-    const newProfileId = String(data.profile.pk);
+      const data = await res.json();
+      const newProfileId = String(data.profile.pk);
 
-    await AsyncStorage.setItem('auth_token', data.token);
-    await AsyncStorage.setItem('profile_id', newProfileId);
-    setToken(data.token);
-    setProfileId(newProfileId);
+      await AsyncStorage.setItem('auth_token', data.token);
+      await AsyncStorage.setItem('profile_id', newProfileId);
+      setToken(data.token);
+      setProfileId(newProfileId);
+    } catch (e) {
+      console.error('Login request failed:', e);
+      throw e; // rethrow so the login screen can show its error message
+    }
   };
 
   const logout = async () => {
