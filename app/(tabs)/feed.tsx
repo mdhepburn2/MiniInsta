@@ -1,3 +1,7 @@
+// File: feed.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: feed screen that displays the posts in the logged-in user's feed
+
 import { FlatList, ActivityIndicator } from 'react-native';
 import { Link, Stack } from 'expo-router';
 import { useColors } from '@/components/Themed';

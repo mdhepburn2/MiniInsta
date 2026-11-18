@@ -1,3 +1,7 @@
+// File: _layout.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: root layout that loads fonts and theme, wraps the app in AuthProvider, and sets up the stack navigator
+
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';

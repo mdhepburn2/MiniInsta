@@ -1,3 +1,7 @@
+// File: post.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: detail screen that shows a single post
+
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useState, useEffect } from "react";
 import { url } from "@/constants/api";

@@ -1,3 +1,7 @@
+// File: profile.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: profile screen for a user, showing their info and photo grid
+
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useState, useEffect } from "react";
 import { url } from "@/constants/api";

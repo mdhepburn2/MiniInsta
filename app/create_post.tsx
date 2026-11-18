@@ -1,6 +1,6 @@
 // File: create_post.tsx
-// Description: screen that lets the logged-in user create a new post
-// with up to 10 photos and a caption
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: screen that lets the logged-in user create a new post with up to 10 photos and a caption
 
 import { Host, TextInput, useNativeState } from '@expo/ui';
 import { SymbolView } from 'expo-symbols';

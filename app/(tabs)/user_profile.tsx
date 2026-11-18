@@ -1,3 +1,7 @@
+// File: user_profile.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: profile screen for the logged-in user, showing their photos in a grid
+
 import { FlatList, ActivityIndicator } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useColors } from '@/components/Themed';

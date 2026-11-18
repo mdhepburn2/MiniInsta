@@ -1,3 +1,7 @@
+// File: _layout.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: bottom tab navigator for the logged-in screens (all profiles, feed, user profile)
+
 import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
 import { Pressable, Text } from 'react-native';

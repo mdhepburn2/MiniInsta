@@ -1,3 +1,7 @@
+// File: login.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: login screen where the user signs in to MiniInsta
+
 import { useAuth } from "@/components/AuthContext";
 import { useState } from "react";
 import { ScrollView, Text, TextInput, View, type TextStyle } from "react-native";

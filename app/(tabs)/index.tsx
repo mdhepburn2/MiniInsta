@@ -1,3 +1,7 @@
+// File: index.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: home screen that lists all user profiles
+
 import { useEffect, useState } from 'react';
 import { FlatList, ActivityIndicator, Text, View } from 'react-native';
 import { Avatar, MessageText, Tappable } from '@/assets/styles';

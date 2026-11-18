@@ -1,3 +1,7 @@
+// File: styles.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: shared styled components (Avatar, PillButton, FittedImage, ProfileHeader, etc.) for MiniInsta
+
 // Shared styled components for MiniInsta. Colors come from constants/Colors via useColors.
 import { useEffect, useState, type ReactNode } from 'react';
 import {

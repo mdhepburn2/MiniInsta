@@ -1,3 +1,7 @@
+// File: AuthContext.tsx
+// Author: Matthew Hepburn (mhepburn@bu.edu), 11/18/2026
+// Description: auth context provider that stores login state and talks to the MiniInsta API
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { url } from '@/constants/api';
