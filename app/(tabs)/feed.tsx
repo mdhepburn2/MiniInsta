@@ -1,4 +1,4 @@
-import { FlatList, Image, Pressable } from 'react-native';
+import { FlatList, Image, Pressable, ActivityIndicator } from 'react-native';
 import { Link, Stack } from 'expo-router';
 import { styles } from '@/assets/styles';
 import { Text, View } from '@/components/Themed';
@@ -37,7 +37,7 @@ export default function Feed(){
         return(
             <View style={styles.container}>
                 <Stack.Screen options={{ headerBackTitle: 'Back' }} />
-                <Text>Loading...</Text>
+                <ActivityIndicator size="large" />
             </View>
         )
     }

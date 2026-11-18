@@ -3,7 +3,7 @@ import { useLocalSearchParams, Stack } from "expo-router";
 import { styles } from "@/assets/styles";
 import { useState, useEffect } from "react";
 import { url } from "@/constants/api";
-import { Image, FlatList } from "react-native";
+import { Image, FlatList, ActivityIndicator } from "react-native";
 import { mediaUrl } from "@/constants/api";
 import { useAuth } from "@/components/AuthContext";
 
@@ -39,7 +39,7 @@ export default function Post(){
         return(
             <View style={styles.container}>
                 <Stack.Screen options={{ headerBackTitle: back}} />
-                <Text>Loading...</Text>
+                <ActivityIndicator size="large" />
             </View>
         )
     }
