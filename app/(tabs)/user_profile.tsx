@@ -1,5 +1,6 @@
 import { FlatList, Image, Pressable, ActivityIndicator } from 'react-native';
-import { Link, Stack } from 'expo-router';
+import { Link, Stack, router } from 'expo-router';
+import { Host, Button } from '@expo/ui';
 import { styles } from '@/assets/styles';
 import { Text, View } from '@/components/Themed';
 import { useAuth } from '@/components/AuthContext';
@@ -13,8 +14,16 @@ export default function UserProfile() {
   const [posts, setPosts] = useState<any>()
   const [error, setError] = useState<string | null>(null)
 
-  const fetchData = async () => {
-      setLoading(true)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const onRefresh = async () => {
+      setRefreshing(true)
+      await fetchData(true)
+      setRefreshing(false)
+  }
+
+  const fetchData = async (isRefresh = false) => {
+      if (!isRefresh) setLoading(true)
       try {
           const profileResponse = await authFetch(url + 'profile/' + profileId)
           const postsResponse = await authFetch(url + 'profile/' + profileId + '/posts')
@@ -62,12 +71,25 @@ return(
           style={styles.postGrid}
           contentInsetAdjustmentBehavior="automatic"
           data={posts}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           numColumns={3}
           ListHeaderComponent={() => (
               <View style={styles.profileHeader}>
                   <Image source={{ uri: mediaUrl(profile.pfp_url)}} style={styles.profileHeaderAvatar}/>
                   <Text style={styles.profileHeaderName}>{profile.display_name}</Text>
                   <Text style={styles.profileHeaderUsername}>@{profile.username}</Text>
+              </View>
+          )}
+          ListFooterComponent={() => (
+              <View style={styles.profileFooter}>
+                  <Host matchContents>
+                      <Button
+                          variant="filled"
+                          label="New Post"
+                          onPress={() => router.push('/create_post')}
+                      />
+                  </Host>
               </View>
           )}
           renderItem={({item}) => (

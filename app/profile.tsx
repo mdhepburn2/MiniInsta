@@ -17,8 +17,16 @@ export default function Profile(){
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    const fetchData = async () => {
-        setLoading(true)
+    const [refreshing, setRefreshing] = useState(false)
+
+    const onRefresh = async () => {
+        setRefreshing(true)
+        await fetchData(true)
+        setRefreshing(false)
+    }
+
+    const fetchData = async (isRefresh = false) => {
+        if (!isRefresh) setLoading(true)
         try {
             const profileResponse = await authFetch(url + 'profile/' + pk)
             const postsResponse = await authFetch(url + 'profile/' + pk + '/posts')
@@ -66,6 +74,8 @@ return(
             style={styles.postGrid}
             contentInsetAdjustmentBehavior="automatic"
             data={posts}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
             numColumns={3}
             ListHeaderComponent={() => (
                 <View style={styles.profileHeader}>

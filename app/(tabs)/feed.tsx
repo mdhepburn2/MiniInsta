@@ -12,8 +12,16 @@ export default function Feed(){
     const [posts, setPosts] = useState<any>()
     const [error, setError] = useState<string | null>(null)
     
-    const fetchData = async () => {
-        setLoading(true)
+    const [refreshing, setRefreshing] = useState(false)
+
+    const onRefresh = async () => {
+        setRefreshing(true)
+        await fetchData(true)
+        setRefreshing(false)
+    }
+
+    const fetchData = async (isRefresh = false) => {
+        if (!isRefresh) setLoading(true)
         try {
             const postsResponse = await authFetch(`${url}profile/${profileId}/feed`)
 
@@ -56,6 +64,8 @@ export default function Feed(){
           style={styles.postGrid}
           contentInsetAdjustmentBehavior="automatic"
           data={posts}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           numColumns={1}
           renderItem={({item}) => (
               <Link href={{ pathname: '/post', params:{ pk: item.pk } }} asChild>

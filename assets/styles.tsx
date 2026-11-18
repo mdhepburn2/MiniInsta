@@ -62,6 +62,10 @@ export const styles = StyleSheet.create({
   profilePage: {
     flex: 1,
   },
+  profileFooter: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
   profileHeader: {
     alignItems: 'center',
     paddingTop: 24,
