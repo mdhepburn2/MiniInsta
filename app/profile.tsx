@@ -57,7 +57,7 @@ export default function Profile(){
             </View>
         )
     }
-    console.log(posts)
+    // console.log(posts)
 
 return(
         <View style={styles.profilePage}>

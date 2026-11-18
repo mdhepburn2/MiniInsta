@@ -27,7 +27,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{
-                ios: 'book',
+                ios: 'person.3',
                 android: 'book',
                 web: 'book',
               }}
@@ -52,13 +52,30 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="feed"
+        options={{
+          title: 'Feed',
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{
+                ios: 'rectangle.stack',
+                android: 'book',
+                web: 'book',
+              }}
+              tintColor={color}
+              size={28}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="user_profile"
         options={{
           title: 'You',
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{
-                ios: 'person',
+                ios: 'person.crop.circle',
                 android: 'person',
                 web: 'person',
               }}

@@ -14,6 +14,8 @@ export default function Post(){
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
+    const back = username === undefined ? 'back' : `@${username}`
+
     const fetchData = async () => {
         setLoading(true)
         try {
@@ -36,7 +38,7 @@ export default function Post(){
     if(loading){
         return(
             <View style={styles.container}>
-                <Stack.Screen options={{ headerBackTitle: '@' + username}} />
+                <Stack.Screen options={{ headerBackTitle: back}} />
                 <Text>Loading...</Text>
             </View>
         )
@@ -44,7 +46,7 @@ export default function Post(){
     if(error || !post){
         return(
             <View style={styles.container}>
-                <Stack.Screen options={{ headerBackTitle: '@' + username}} />
+                <Stack.Screen options={{ headerBackTitle: back}} />
                 <Text>{error ?? 'Post not found.'}</Text>
             </View>
         )
@@ -52,7 +54,7 @@ export default function Post(){
 
     return(
         <>
-        <Stack.Screen options={{ headerBackTitle: '@' + username}} />
+        <Stack.Screen options={{ headerBackTitle: back}} />
         <FlatList
         style={styles.postDetailList}
         contentContainerStyle={styles.postDetailContent}
