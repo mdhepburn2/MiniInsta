@@ -5,11 +5,11 @@
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useState, useEffect } from "react";
 import { url } from "@/constants/api";
-import { FlatList, ActivityIndicator, Text } from "react-native";
+import { ScrollView, ActivityIndicator, Text, View } from "react-native";
 import { mediaUrl } from "@/constants/api";
 import { useAuth } from "@/components/AuthContext";
 import { useColors } from "@/components/Themed";
-import { FittedImage, Centered, MessageText } from '@/assets/styles';
+import { Centered, MessageText, PostAuthor, PhotoCarousel } from '@/assets/styles';
 
 export default function Post(){
     const { authFetch } = useAuth()
@@ -57,25 +57,33 @@ export default function Post(){
         )
     }
 
+    const posted = new Date(post.timestamp).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+
+    // Author on top, then the photos, then caption and date, like a feed post opened up
     return(
-        <>
-        <Stack.Screen options={{ title: 'Post', headerBackTitle: back }} />
-        <FlatList
+        <ScrollView
         style={{ flex: 1, backgroundColor: c.background }}
-        contentContainerStyle={{ gap: 2 }}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: 40, gap: 16 }}
         contentInsetAdjustmentBehavior="automatic"
-        data={post.all_photos}
-        numColumns={1}
-        // Photos run edge to edge at their own proportions, never cropped
-        renderItem={({item}) => (
-            <FittedImage uri={mediaUrl(item.url)} minRatio={0.5} maxRatio={3} resizeMode="contain" />
-        )}
-        ListFooterComponent={() => (
-            <Text selectable style={{ color: c.text, fontSize: 17, lineHeight: 24, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}>
-                {post.caption}
-            </Text>
-        )}
-        />
-        </>
+        >
+            <Stack.Screen options={{ title: 'Post', headerBackTitle: back }} />
+            <View style={{ paddingHorizontal: 16 }}>
+                <PostAuthor
+                    href={{ pathname: '/profile', params: { pk: post.profile_json.pk } }}
+                    photo={mediaUrl(post.profile_json.pfp_url)}
+                    name={post.profile_json.display_name}
+                    username={post.profile_json.username}
+                />
+            </View>
+            <PhotoCarousel uris={post.all_photos.map((photo: any) => mediaUrl(photo.url))} />
+            <View style={{ paddingHorizontal: 20, gap: 6 }}>
+                {!!post.caption && (
+                    <Text selectable style={{ color: c.text, fontSize: 17, lineHeight: 24 }}>
+                        {post.caption}
+                    </Text>
+                )}
+                <Text style={{ color: c.secondaryText, fontSize: 13 }}>{posted}</Text>
+            </View>
+        </ScrollView>
     )
 }

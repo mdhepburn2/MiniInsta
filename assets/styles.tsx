@@ -6,7 +6,9 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import {
   ActivityIndicator,
+  FlatList,
   Image,
+  useWindowDimensions,
   Pressable,
   Text,
   View,
@@ -197,6 +199,117 @@ export function ProfileHeader({ photo, name, username, children }: ProfileHeader
         </View>
       </View>
       {children}
+    </View>
+  );
+}
+
+// ---- PostAuthor: who posted, shown above a feed photo; taps through to their profile ----
+
+type PostAuthorProps = {
+  href: Href;
+  photo: string;
+  name: string;
+  username: string;
+};
+
+export function PostAuthor({ href, photo, name, username }: PostAuthorProps) {
+  const c = useColors();
+  return (
+    <Link href={href} asChild>
+      <Tappable style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Avatar uri={photo} size={44} />
+        <View style={{ flex: 1 }}>
+          <Text numberOfLines={1} style={{ color: c.text, fontSize: 16, fontWeight: '600' }}>
+            {name}
+          </Text>
+          <Text numberOfLines={1} style={{ color: c.tint, fontSize: 14 }}>
+            @{username}
+          </Text>
+        </View>
+      </Tappable>
+    </Link>
+  );
+}
+
+// ---- PhotoCarousel: swipeable post photos with page dots ----
+// The frame takes the first photo's proportions (down to 9:16, so tall phone
+// photos fill it); every photo fits inside it without cropping.
+
+type PhotoCarouselProps = {
+  uris: string[];
+  /** Space on each side of the photo. */
+  inset?: number;
+  /** Narrowest allowed frame (width / height). Default fits a 9:16 phone photo without side bars. */
+  minRatio?: number;
+};
+
+export function PhotoCarousel({ uris, inset = 16, minRatio = 9 / 16 }: PhotoCarouselProps) {
+  const c = useColors();
+  const { width } = useWindowDimensions();
+  const [ratio, setRatio] = useState<number | null>(null);
+  const [page, setPage] = useState(0);
+  const first = uris[0];
+
+  useEffect(() => {
+    if (!first) return;
+    let active = true;
+    Image.getSize(first)
+      .then(({ width: w, height: h }) => {
+        if (active && w > 0 && h > 0) setRatio(w / h);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [first]);
+
+  const aspectRatio = Math.min(1.91, Math.max(minRatio, ratio ?? 1));
+  const many = uris.length > 1;
+
+  return (
+    <View style={{ gap: 12 }}>
+      <FlatList
+        horizontal
+        pagingEnabled
+        scrollEnabled={many}
+        showsHorizontalScrollIndicator={false}
+        data={uris}
+        keyExtractor={(uri, i) => `${i}-${uri}`}
+        scrollEventThrottle={16}
+        onScroll={(e) => setPage(Math.round(e.nativeEvent.contentOffset.x / width))}
+        renderItem={({ item, index }) => (
+          <View style={{ width, paddingHorizontal: inset }}>
+            <Image
+              source={{ uri: item }}
+              resizeMode="contain"
+              accessibilityLabel={many ? `Photo ${index + 1} of ${uris.length}` : 'Photo'}
+              style={{
+                width: width - inset * 2,
+                aspectRatio,
+                borderRadius: 16,
+                borderCurve: 'continuous',
+                backgroundColor: c.surface,
+              }}
+            />
+          </View>
+        )}
+      />
+      {many && (
+        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
+          {uris.map((uri, i) => (
+            <View
+              key={`${i}-${uri}`}
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: 3.5,
+                backgroundColor: i === page ? c.tint : c.secondaryText,
+                opacity: i === page ? 1 : 0.3,
+              }}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 }
